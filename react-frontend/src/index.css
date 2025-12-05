@@ -1,0 +1,158 @@
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+  color: #222;
+  background-color: #f5f5f5;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 16px 40px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+}
+
+input,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button.secondary {
+  background: #eee;
+}
+
+button.danger {
+  background: #ff4d4f;
+  color: white;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-input {
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.notes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note {
+  background: #f8f8f8;
+  padding: 10px 12px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message {
+  margin-top: 8px;
+  color: #c03;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+}
+
+.main {
+  margin-top: 24px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 14px;
+  color: #555;
+  padding-bottom: 2px;
+}
+
+.nav-link.active {
+  border-bottom: 2px solid #333;
+  color: #111;
+}
+
+.nav-button {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  background: #eee;
+}
+
+.nav-button:hover {
+  opacity: 0.9;
+}
