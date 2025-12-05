@@ -1,6 +1,9 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-function Navbar({ loggedIn, onLogout }) {
+function Navbar() {
+  const { loggedIn, logout } = useAuth();
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -29,7 +32,7 @@ function Navbar({ loggedIn, onLogout }) {
         )}
 
         {loggedIn && (
-          <button className="nav-button" onClick={onLogout}>
+          <button className="nav-button" onClick={logout}>
             Logout
           </button>
         )}

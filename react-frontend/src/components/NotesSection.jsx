@@ -1,7 +1,12 @@
 import { useState } from "react";
+import { useNotes } from "../context/NotesContext";
+import { useAuth } from "../context/AuthContext";
 
-function NotesSection({ notes, loading, onAddNote, onDeleteNote, onLogout }) {
+function NotesSection() {
   const [noteText, setNoteText] = useState("");
+
+  const { notes, loading, addNote, deleteNote } = useNotes();
+  const { logout } = useAuth();
 
   async function handleAddClick() {
     const text = noteText.trim();
@@ -10,7 +15,7 @@ function NotesSection({ notes, loading, onAddNote, onDeleteNote, onLogout }) {
       return;
     }
 
-    await onAddNote(text);
+    await addNote(text);
     setNoteText("");
   }
 
@@ -18,7 +23,7 @@ function NotesSection({ notes, loading, onAddNote, onDeleteNote, onLogout }) {
     <div className="card">
       <div className="header-row">
         <h2>Your Notes</h2>
-        <button className="secondary" onClick={onLogout}>
+        <button className="secondary" onClick={logout}>
           Logout
         </button>
       </div>
@@ -43,7 +48,7 @@ function NotesSection({ notes, loading, onAddNote, onDeleteNote, onLogout }) {
               <span>{note.text}</span>
               <button
                 className="danger"
-                onClick={() => onDeleteNote(note._id)}
+                onClick={() => deleteNote(note._id)}
               >
                 Delete
               </button>
