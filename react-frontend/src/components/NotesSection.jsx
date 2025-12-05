@@ -3,9 +3,11 @@ import { useNotes } from "../context/NotesContext";
 import { useAuth } from "../context/AuthContext";
 
 function NotesSection() {
-  const [noteText, setNoteText] = useState("");
+  const [noteText, setNoteText] = useState("");      // new note
+  const [editingId, setEditingId] = useState(null);  // which note is being edited
+  const [editingText, setEditingText] = useState(""); // text while editing
 
-  const { notes, loading, addNote, deleteNote } = useNotes();
+  const { notes, loading, addNote, deleteNote, updateNote } = useNotes();
   const { logout } = useAuth();
 
   async function handleAddClick() {
@@ -17,6 +19,28 @@ function NotesSection() {
 
     await addNote(text);
     setNoteText("");
+  }
+
+  function startEditing(note) {
+    setEditingId(note._id);
+    setEditingText(note.text);
+  }
+
+  function cancelEditing() {
+    setEditingId(null);
+    setEditingText("");
+  }
+
+  async function saveEditing() {
+    const text = editingText.trim();
+    if (!text) {
+      alert("Note cannot be empty!");
+      return;
+    }
+
+    await updateNote(editingId, text);
+    setEditingId(null);
+    setEditingText("");
   }
 
   return (
@@ -45,13 +69,34 @@ function NotesSection() {
         <div className="notes-container">
           {notes.map((note) => (
             <div key={note._id} className="note">
-              <span>{note.text}</span>
-              <button
-                className="danger"
-                onClick={() => deleteNote(note._id)}
-              >
-                Delete
-              </button>
+              {editingId === note._id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                  />
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button onClick={saveEditing}>Save</button>
+                    <button className="secondary" onClick={cancelEditing}>
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span>{note.text}</span>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button onClick={() => startEditing(note)}>Edit</button>
+                    <button
+                      className="danger"
+                      onClick={() => deleteNote(note._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>

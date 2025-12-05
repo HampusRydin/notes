@@ -21,6 +21,37 @@ export function NotesProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+
+  async function updateNote(id, text) {
+    if (!token) return;
+  
+    try {
+      const res = await fetch(`${API_BASE}/notes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text }),
+      });
+  
+      if (res.status === 401) {
+        logout();
+        return;
+      }
+  
+      if (!res.ok) {
+        console.error("Failed to update note");
+        return;
+      }
+  
+      await fetchNotes();
+    } catch (err) {
+      console.error("Error updating note", err);
+    }
+  }
+  
+
   async function fetchNotes() {
     if (!token) return;
 
@@ -95,7 +126,7 @@ export function NotesProvider({ children }) {
 
   return (
     <NotesContext.Provider
-      value={{ notes, loading, addNote, deleteNote }}
+      value={{ notes, loading, addNote, deleteNote, updateNote }}
     >
       {children}
     </NotesContext.Provider>

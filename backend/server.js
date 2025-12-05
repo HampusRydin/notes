@@ -29,10 +29,14 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 
 // Note model (now linked to a user)
-const NoteSchema = new mongoose.Schema({
-  text: { type: String, required: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-});
+const NoteSchema = new mongoose.Schema(
+    {
+      text: { type: String, required: true },
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    },
+    { timestamps: true }
+  );
+  
 
 const Note = mongoose.model('Note', NoteSchema);
 
@@ -135,6 +139,27 @@ app.delete('/api/notes/:id', authMiddleware, async (req, res) => {
   await Note.deleteOne({ _id: req.params.id, userId: req.user.userId });
   res.status(204).send();
 });
+
+// Update a note (only if it belongs to the logged-in user)
+app.put('/api/notes/:id', authMiddleware, async (req, res) => {
+    const { text } = req.body;
+    if (!text || !text.trim()) {
+      return res.status(400).json({ error: 'Text is required' });
+    }
+  
+    const updated = await Note.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.userId },
+      { text: text.trim() },
+      { new: true } // return the updated document
+    );
+  
+    if (!updated) {
+      return res.status(404).json({ error: 'Note not found' });
+    }
+  
+    res.json(updated);
+  });
+  
 
 // Start server
 app.listen(PORT, () => {
