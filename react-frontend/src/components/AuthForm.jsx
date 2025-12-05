@@ -15,22 +15,34 @@ function AuthForm({ onRegister, onLogin, message }) {
   return (
     <div className="card">
       <h2>Login / Register</h2>
+
+      <label htmlFor="email">Email</label>
       <input
+        id="email"
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
+
+      <label htmlFor="password">Password</label>
       <input
+        id="password"
         type="password"
         placeholder="Password (min 6 chars)"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+
       <div className="row">
-        <button onClick={handleRegisterClick}>Register</button>
-        <button onClick={handleLoginClick}>Login</button>
+        <button type="button" onClick={handleRegisterClick}>
+          Register
+        </button>
+        <button type="button" onClick={handleLoginClick}>
+          Login
+        </button>
       </div>
+
       {message && <p className="message">{message}</p>}
     </div>
   );
