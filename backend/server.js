@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -5,20 +6,32 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-app.use(cors());
+const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
+
+app.use(
+  cors({
+    origin: allowedOrigin,
+  })
+);
+
 app.use(express.json());
 
 // === CONFIG ===
-const PORT = 3000;
-const JWT_SECRET = 'supersecretkey'; // For learning; use env vars in real apps
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  'mongodb://root:example@localhost:27017/notes?authSource=admin';
+
 
 // === CONNECT TO MONGO ===
 // When running tests, Jest runs this file without starting the server.
 // Mongo will still connect normally as long as your Docker container is running.
 mongoose
-  .connect('mongodb://root:example@localhost:27017/notes?authSource=admin')
+  .connect(MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
+
 
 // === MODELS ===
 const UserSchema = new mongoose.Schema({
