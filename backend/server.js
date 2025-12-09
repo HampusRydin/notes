@@ -16,24 +16,20 @@ app.use(
 
 app.use(express.json());
 
-// === CONFIG ===
+// Configuration
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  'mongodb://root:example@localhost:27017/notes?authSource=admin';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/notes';
 
 
-// === CONNECT TO MONGO ===
-// When running tests, Jest runs this file without starting the server.
-// Mongo will still connect normally as long as your Docker container is running.
+// Connect to MongoDB
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
 
-// === MODELS ===
+// Models
 const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true }
@@ -50,7 +46,7 @@ const NoteSchema = new mongoose.Schema(
 const User = mongoose.model('User', UserSchema);
 const Note = mongoose.model('Note', NoteSchema);
 
-// === AUTH MIDDLEWARE ===
+// Auth middleware
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer '))
@@ -67,7 +63,7 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// === AUTH ROUTES ===
+// Auth routes
 app.post('/api/register', async (req, res) => {
   const { email, password } = req.body;
 
@@ -99,7 +95,7 @@ app.post('/api/login', async (req, res) => {
   return res.json({ token });
 });
 
-// === NOTES ROUTES ===
+// Notes routes
 app.get('/api/notes', authMiddleware, async (req, res) => {
   const notes = await Note.find({ userId: req.user.userId }).sort({ createdAt: -1 });
   res.json(notes);
@@ -140,13 +136,12 @@ app.delete('/api/notes/:id', authMiddleware, async (req, res) => {
   res.status(204).send();
 });
 
-// === START SERVER (only when not in tests) ===
-// Jest requires that the server NOT start automatically
+// Start server
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 
-// Export for Jest tests
+// Export for tests
 module.exports = app;
