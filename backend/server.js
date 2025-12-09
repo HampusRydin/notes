@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
 
+// Enable CORS for the allowed origin
 app.use(
   cors({
     origin: allowedOrigin,
