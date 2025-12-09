@@ -20,7 +20,7 @@ app.use(express.json());
 // Configuration
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/notes';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://root:example@localhost:27017/notes?authSource=admin';
 
 
 // Connect to MongoDB
@@ -47,6 +47,11 @@ const NoteSchema = new mongoose.Schema(
 const User = mongoose.model('User', UserSchema);
 const Note = mongoose.model('Note', NoteSchema);
 
+// Helper to wrap async route handlers and catch errors
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 // Auth middleware
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -65,7 +70,7 @@ function authMiddleware(req, res, next) {
 }
 
 // Auth routes
-app.post('/api/register', async (req, res) => {
+app.post('/api/register', asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email?.trim() || !password?.trim())
@@ -81,9 +86,9 @@ app.post('/api/register', async (req, res) => {
 
   const user = await User.create({ email, passwordHash });
   return res.status(201).json({ message: 'User created' });
-});
+}));
 
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -94,15 +99,15 @@ app.post('/api/login', async (req, res) => {
 
   const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1d' });
   return res.json({ token });
-});
+}));
 
 // Notes routes
-app.get('/api/notes', authMiddleware, async (req, res) => {
+app.get('/api/notes', authMiddleware, asyncHandler(async (req, res) => {
   const notes = await Note.find({ userId: req.user.userId }).sort({ createdAt: -1 });
   res.json(notes);
-});
+}));
 
-app.post('/api/notes', authMiddleware, async (req, res) => {
+app.post('/api/notes', authMiddleware, asyncHandler(async (req, res) => {
   const { text } = req.body;
 
   if (!text || !text.trim())
@@ -114,9 +119,9 @@ app.post('/api/notes', authMiddleware, async (req, res) => {
   });
 
   res.status(201).json(note);
-});
+}));
 
-app.put('/api/notes/:id', authMiddleware, async (req, res) => {
+app.put('/api/notes/:id', authMiddleware, asyncHandler(async (req, res) => {
   const { text } = req.body;
 
   if (!text || !text.trim())
@@ -130,11 +135,17 @@ app.put('/api/notes/:id', authMiddleware, async (req, res) => {
 
   if (!updated) return res.status(404).json({ error: 'Note not found' });
   res.json(updated);
-});
+}));
 
-app.delete('/api/notes/:id', authMiddleware, async (req, res) => {
+app.delete('/api/notes/:id', authMiddleware, asyncHandler(async (req, res) => {
   await Note.deleteOne({ _id: req.params.id, userId: req.user.userId });
   res.status(204).send();
+}));
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 // Start server
