@@ -14,6 +14,8 @@ https://hampusrydinnotes.netlify.app
 **Backend (Render)**  
 https://notes-backend-bx4s.onrender.com  
 
+> Note: The backend is hosted on Render’s free tier and may take a little longer to wake up on first request
+
 ---
 
 ## Project Overview
@@ -76,3 +78,4 @@ This application was created as part of a broader effort to gain practical exper
 It provides hands-on exposure to designing APIs, structuring a React application, managing authentication, integrating with a cloud database, deploying web services, and setting up automated testing workflows.
 
 ---
+
