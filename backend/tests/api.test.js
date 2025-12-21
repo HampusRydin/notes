@@ -31,7 +31,7 @@ describe('Auth + Notes flow', () => {
 
     const token = loginRes.body.token;
 
-    // Get notes (should be empty)
+    // Get notes
     const getRes = await request(app)
       .get('/api/notes')
       .set('Authorization', `Bearer ${token}`);
